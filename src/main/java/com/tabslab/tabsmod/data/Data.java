@@ -26,6 +26,7 @@ public class Data {
     public static final Map<String, BlockPos> blockPositions = new HashMap<>();
     private static Entity playerEntity;
 
+
     public static void setPlayerEntity(Entity entity) {
         playerEntity = entity;
         System.out.println("Entity Set");
@@ -34,6 +35,10 @@ public class Data {
 
         System.out.println("Player Chunk: ");
         System.out.println(entity.chunkPosition());
+    }
+
+    public static void teleportPlayer(double x, double y, double z) {
+        playerEntity.moveTo(x, y, z);
     }
 
     public static void setBlockPositions(Map<String, BlockPos> positions) {
@@ -79,16 +84,15 @@ public class Data {
             int chunkX_b = chunk_b.getPos().x;
             int chunkZ_b = chunk_b.getPos().z;
 
-            int y_a = block_a_pos.getY(); // maintain the y coordinate of block_a
-            int y_b = block_b_pos.getY(); // maintain the y coordinate of block_b
+            // Gets position of player
+            BlockPos playerPos = playerEntity.getOnPos();
+            int xPos = playerPos.getX();
+            int yPos = playerPos.getY();
+            int zPos = playerPos.getZ();
+            // Respawns blocks to be at an equidistant position from player
+            BlockPos updated_block_a_pos_new = new BlockPos(xPos + 3, yPos + 1, zPos + 3);
+            BlockPos updated_block_b_pos_new = new BlockPos(xPos - 3, yPos + 1, zPos + 3);
 
-            int newX_a = chunkX_a * 16 + random.nextInt(16);
-            int newZ_a = chunkZ_a * 16 + random.nextInt(16);
-            BlockPos updated_block_a_pos_new = new BlockPos(newX_a, y_a, newZ_a);
-
-            int newX_b = chunkX_b * 16 + random.nextInt(16);
-            int newZ_b = chunkZ_b * 16 + random.nextInt(16);
-            BlockPos updated_block_b_pos_new = new BlockPos(newX_b, y_b, newZ_b);
 
             // Place the blocks at the new random positions
             BlockState blockStateA = BlockInit.BLOCK_A.get().defaultBlockState();
